@@ -53,13 +53,16 @@ namespace GameFinisher
 
                 int juegosagregados = 0;
 
-                // Cargar Steam si existe
+                // Cargar Steam y GOG si existe
                 string steamid = Properties.Settings.Default.SteamID;
-                if (!string.IsNullOrEmpty(steamid)) { juegosagregados += await Padre.ImportarSteam(steamid); }
-
-                // Cargar GOG si existe
                 string goguser = Properties.Settings.Default.GOGUsername;
-                if (!string.IsNullOrEmpty(goguser)) { juegosagregados += await Padre.ImportarGOG(goguser); }
+
+                var importarSteamTask = string.IsNullOrEmpty(steamid) ? Task.FromResult(0) : Padre.ImportarSteam(steamid);
+                var importarGOGTask = string.IsNullOrEmpty(goguser) ? Task.FromResult(0) : Padre.ImportarGOG(goguser);
+                await Task.WhenAll(importarSteamTask, importarGOGTask);
+
+                juegosagregados += importarSteamTask.Result;
+                juegosagregados += importarGOGTask.Result;
 
                 // Cargar juegos previos guardados (si existen)
                 var juegosGuardados = Padre.JuegosEnPropiedad;

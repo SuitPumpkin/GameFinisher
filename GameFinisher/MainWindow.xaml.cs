@@ -49,10 +49,13 @@ namespace GameFinisher
     }
     public partial class MainWindow : System.Windows.Window
     {
+        // Elementos multifuncionales
+
         public List<JuegoRankeado> BaseDeDatos { get; set; } = new();
         public List<JuegoRankeado> JuegosEnPropiedad { get; set; } = new();
         public class HowLongToBeat
         {
+            private static Dictionary<string, Game> cache = new Dictionary<string, Game>();
             private static int LevenshteinDistance(string s, string t)
             {
                 if (string.IsNullOrEmpty(s)) return t.Length;
@@ -116,6 +119,7 @@ namespace GameFinisher
             }
             public static async Task<Game> Search(string busqueda)
             {
+                if (cache.ContainsKey(busqueda)) return cache[busqueda];
                 HttpClient httpClient = new();
                 busqueda = Regex.Replace(busqueda, @"(:?\s*DEMO|\s*Demo)", "", RegexOptions.IgnoreCase).Trim();
                 busqueda = busqueda.Replace(":", "");
@@ -192,7 +196,7 @@ namespace GameFinisher
                         mejorJuego = juego;
                     }
                 }
-                // Imprimir la respuesta en consola para verificar
+                if (mejorJuego != null) cache[busqueda] = mejorJuego;
                 return mejorJuego;
             }
         }
@@ -277,25 +281,18 @@ namespace GameFinisher
                 }).ToList();
                 // Comparar y actualizar los juegos en JuegosListados
                 int agregados = 0;
-                foreach (var juegito in listaJuegos)
+                Parallel.ForEach(listaJuegos, (juegito) =>
                 {
-                    //existente
                     var juegoExistente = JuegosEnPropiedad.FirstOrDefault(j => j.Titulo == juegito.Titulo);
-                    if (juegoExistente != null)
+                    if (juegoExistente == null)
                     {
-                        // Si el juego ya existe, actualizar el IdSteam
-                        if (juegoExistente.IdSteam != juegito.IdSteam)
+                        lock (JuegosEnPropiedad)
                         {
-                            juegoExistente.IdSteam = juegito.IdSteam;
+                            JuegosEnPropiedad.Add(juegito);
                         }
+                        Interlocked.Increment(ref agregados);
                     }
-                    else
-                    {
-                        // Si no existe, añadir el juego filtrado
-                        JuegosEnPropiedad.Add(juegito);
-                        agregados++;
-                    }
-                }
+                });
                 return agregados;
             }
             catch (Exception ex)
@@ -441,7 +438,7 @@ namespace GameFinisher
                 string archivoPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{nombre}.json");
 
                 // Guardar el archivo JSON en el escritorio
-                System.IO.File.WriteAllText(archivoPath, jsonFormateado);
+                await System.IO.File.WriteAllTextAsync(archivoPath, jsonFormateado);
 
                 // Mostrar mensaje de éxito
                 HandyControl.Controls.MessageBox.Show($"El archivo {nombre}.json ha sido guardado.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -455,15 +452,12 @@ namespace GameFinisher
         public async Task<List<JuegoRankeado>> CargarJuegos(string nombre)
         {
             string jsonFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{nombre}.json");
-            List<JuegoRankeado> juegos = new();
-            // Leer el archivo JSON
             if (System.IO.File.Exists(jsonFilePath))
             {
-                string jsonData = System.IO.File.ReadAllText(jsonFilePath);
-                // Deserializar el JSON a una lista de objetos
-                juegos = JsonConvert.DeserializeObject<List<JuegoRankeado>>(jsonData);
+                string jsonData = await System.IO.File.ReadAllTextAsync(jsonFilePath);
+                return JsonConvert.DeserializeObject<List<JuegoRankeado>>(jsonData) ?? new List<JuegoRankeado>();
             }
-            return juegos;
+            return new List<JuegoRankeado>();
         }
     }
 }
