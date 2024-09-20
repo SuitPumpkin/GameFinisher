@@ -22,6 +22,9 @@ using static GameFinisher.MainWindow.HowLongToBeat;
 using System.Security.Cryptography;
 using GameFinisher.Properties;
 using System.Net.Http.Json;
+using System.Net;
+using IGDB;
+using IGDB.Models;
 
 namespace GameFinisher
 {
@@ -121,14 +124,7 @@ namespace GameFinisher
             {
                 if (cache.ContainsKey(busqueda)) return cache[busqueda];
                 HttpClient httpClient = new();
-                busqueda = Regex.Replace(busqueda, @"(:?\s*DEMO|\s*Demo)", "", RegexOptions.IgnoreCase).Trim();
-                busqueda = busqueda.Replace(":", "");
-                busqueda = busqueda.Replace("&", "");
-                busqueda = busqueda.Replace("®", "");
-                busqueda = busqueda.Replace("™", "");
-                busqueda = busqueda.Replace("Free Trial", "");
-                busqueda = busqueda.Replace(" Ch.", "chapter ");
-                busqueda = busqueda.Replace(" -", " ");
+                busqueda = LimpiarBusqueda(busqueda);
                 // Ajustar la búsqueda como lo hace el sitio
                 var jsonPayload = new
                 {
@@ -213,17 +209,43 @@ namespace GameFinisher
             public string? Cabecera { get; set; }
             public string? IdSteam { get; set; }
             public string? IdGOG { get; set; }
+            public string? Año { get; set; }
+            public string? Calificación { get; set; }
+            public string? Sinopsis { get; set; }
             public TiemposPara? Tiempos { get; set; }
+        }
+        public class IGDBResponse
+        {
+            public IGDB.Models.Game? Juego { get; set; }
+            public IGDB.Models.Cover? Portada { get; set; }
+        }
+        /// <summary> 
+        /// <para> Search for a game and returns the game and a cover </para>
+        /// </summary>
+        /// <returns>IGDBResponse value</returns>
+        public static async Task<IGDBResponse> IGDBVOID(string searchedtitle)
+        {
+            searchedtitle = LimpiarBusqueda(searchedtitle);
+            //Obtener Juego
+            var igdb = new IGDBClient(Settings.Default.IGDBID, Settings.Default.IGDBSECRET);
+            var games = await igdb.QueryAsync<IGDB.Models.Game>(IGDBClient.Endpoints.Games, query: $"fields age_ratings,aggregated_rating,aggregated_rating_count,alternative_names,artworks,bundles,category,checksum,collection,collections,cover,created_at,dlcs,expanded_games,expansions,external_games,first_release_date,follows,forks,franchise,franchises,game_engines,game_localizations,game_modes,genres,hypes,involved_companies,keywords,language_supports,multiplayer_modes,name,parent_game,platforms,player_perspectives,ports,rating,rating_count,release_dates,remakes,remasters,screenshots,similar_games,slug,standalone_expansions,status,storyline,summary,tags,themes,total_rating,total_rating_count,updated_at,url,version_parent,version_title,videos,websites; search \"{searchedtitle}\";");
+            var game = games.First();
+
+            //Obtener Portada
+            var covers = await igdb.QueryAsync<IGDB.Models.Cover>(IGDBClient.Endpoints.Covers, query: $"fields alpha_channel,animated,checksum,game,game_localization,height,image_id,url,width; where game = {game.Id};");
+            var cover = covers.First();
+
+            return new IGDBResponse(){ Juego = game, Portada = cover, };
         }
 
         //Funcionalidad basica de la ventana
 
         public MainWindow()
         {
-            InitializeComponent();
             PrepararVentana();
+            InitializeComponent();
         } //Construir Ventana
-        private async void PrepararVentana()
+        private async Task PrepararVentana()
         {
             //Cargar la base de datos inicial
             BaseDeDatos = await CargarJuegos("Database");
@@ -414,19 +436,43 @@ namespace GameFinisher
         private void AbrirCuentas(object sender, MouseButtonEventArgs e)
         {
             var settingsDialog = new AccountsDialog();
-
-            // Mostrar el diálogo directamente con el UserControl como contenido
             HandyControl.Controls.Dialog.Show(content: settingsDialog,"Root");
         } //Se uso el botón de Cuenta
         private async void AbrirAjustes(object sender, MouseButtonEventArgs e)
         {
-            //Abrir ajustes
+            var juego = await IGDBVOID("Halo");
 
+            System.Diagnostics.Debug.WriteLine($"Titulo: {juego.Juego.Name}");
+            System.Diagnostics.Debug.WriteLine($"Año: {juego.Juego.FirstReleaseDate}");
+            System.Diagnostics.Debug.WriteLine($"Calificación: {juego.Juego.TotalRating}");
+            System.Diagnostics.Debug.WriteLine($"Sinopsis: {juego.Juego.Summary}");
+            System.Diagnostics.Debug.WriteLine($"Cover: {juego.Portada.Url}");
+
+            //Abrir ajustes
         } //se uso el botón de Ajustes
 
         // Funciones DUMMY
 
-        public async void ActualizarArchivoJson(string listadoJuegos, string nombre)
+        /// <summary>Prepara un string para hacer una busqueda</summary>
+        /// <param name="busqueda">String de busqueda en crudo</param>
+        /// <returns><typeparamref name="string"/> BusquedaLimpia</returns>
+        public static string LimpiarBusqueda(string busqueda)
+        {
+            busqueda = Regex.Replace(busqueda, @"(:?\s*DEMO|\s*Demo)", "", RegexOptions.IgnoreCase).Trim();
+            busqueda = busqueda.Replace(":", "");
+            busqueda = busqueda.Replace("&", "");
+            busqueda = busqueda.Replace("®", "");
+            busqueda = busqueda.Replace("™", "");
+            busqueda = busqueda.Replace("Free Trial", "");
+            busqueda = busqueda.Replace(" Ch.", "chapter ");
+            busqueda = busqueda.Replace(" -", " ");
+
+            return busqueda;
+        }
+        /// <summary><para> Guarda los juegos en formato <typeparamref name="JSON"/> en el archivo mencionado</para></summary>
+        /// <param name="listadoJuegos">Contenido a guardar</param>
+        /// <param name="nombre">Nombre del archivo</param>
+        public static async void ActualizarArchivoJson(string listadoJuegos, string nombre)
         {
             try
             {
@@ -449,7 +495,9 @@ namespace GameFinisher
                 HandyControl.Controls.MessageBox.Show($"Error al guardar el archivo: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public async Task<List<JuegoRankeado>> CargarJuegos(string nombre)
+        /// <summary><para> Carga los juegos desde el JSON mencionado </para></summary>
+        /// <returns>Una lista de <typeparamref name="JuegoRankeado"/></returns>
+        public static async Task<List<JuegoRankeado>> CargarJuegos(string nombre)
         {
             string jsonFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{nombre}.json");
             if (System.IO.File.Exists(jsonFilePath))

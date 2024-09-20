@@ -111,6 +111,7 @@
                             Cursor="Hand"
                             Width="100" 
                             Margin="0,10,0,0"
+                            x:Name="Importador"
                             Click="ImportarJuegos"/>
                     <TextBlock x:Name="LastUpdate" FontSize="9" Opacity="0.25" FontWeight="Bold" Text="Ultima vez: 15/10/2001"/>
                 </StackPanel>

@@ -58,5 +58,23 @@ namespace GameFinisher.Properties {
                 this["LastGameImport"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("zj3dihoaqe9ougkayckq6h7c31umqz")]
+        public string IGDBID {
+            get {
+                return ((string)(this["IGDBID"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("uqmapybmo5di3lh0q1wua4s4dsyzkn")]
+        public string IGDBSECRET {
+            get {
+                return ((string)(this["IGDBSECRET"]));
+            }
+        }
     }
 }

@@ -11,5 +11,11 @@
     <Setting Name="LastGameImport" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="IGDBID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">zj3dihoaqe9ougkayckq6h7c31umqz</Value>
+    </Setting>
+    <Setting Name="IGDBSECRET" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">uqmapybmo5di3lh0q1wua4s4dsyzkn</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
