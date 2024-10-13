@@ -6,22 +6,62 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:GameFinisher"
-        mc:Ignorable="d" hc:Dialog.Token="Root"
+        mc:Ignorable="d"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         AllowsTransparency="True"
         Background="Transparent"
         Title="Game Finisher"
-        Height="500" Width="800">
+        Height="700" Width="1120">
+    <Window.Resources>
+        <Style x:Key="SearchBarWithLeftIconStyle" TargetType="{x:Type hc:SearchBar}" BasedOn="{StaticResource {x:Type hc:SearchBar}}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type hc:SearchBar}">
+                        <hc:SimplePanel x:Name="root">
+                            <Border x:Name="border" CornerRadius="{Binding Path=(hc:BorderElement.CornerRadius),RelativeSource={RelativeSource TemplatedParent}}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Button Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Command="hc:ControlCommands.Search"  Style="{StaticResource ButtonIcon}" hc:IconElement.Width="14" Padding="{Binding Padding, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ThicknessSplitConverter}, ConverterParameter='0,0,1,0'}" hc:IconElement.Geometry="{StaticResource SearchGeometry}" Margin="7,0,-10,0" Grid.Column="0" Foreground="{TemplateBinding BorderBrush}" Focusable="False" Grid.Row="0"/>
+                                <ScrollViewer Margin="2,0" Grid.Row="0" Grid.Column="1" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                            </Grid>
+                        </hc:SimplePanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="root" Value="0.4"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <hc:TransitioningContentControl TransitionMode="Bottom2TopWithFade">
-        <Border Background="White" CornerRadius="10" MouseLeftButtonDown="MoverVentana" Cursor="">
+        <Border Background="White" BorderThickness="5" BorderBrush="#262626" CornerRadius="5" MouseLeftButtonDown="MoverVentana" Cursor="">
             <Viewbox>
                 <Grid Height="750" Width="1200">
-                    <Border x:Name="BotónCierre" 
+                    <!-- Botón de cierre-->
+                    <Border x:Name="BotónCierre" RenderTransformOrigin="0.5,0.5"
                             CornerRadius="8" BorderBrush="#FFD6D6D6" BorderThickness="4" 
                             VerticalAlignment="Top" HorizontalAlignment="Right" 
                             Margin="10" Background="Transparent" 
                             MouseLeftButtonDown="CerrarVentana" Cursor="Hand">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                                <TranslateTransform Y="-10" X="10"/>
+                            </TransformGroup>
+                        </Border.RenderTransform>
                         <fa:IconBlock x:Name="IconoCierre" Icon="Close" FontSize="30" Foreground="#FFD6D6D6" Margin="10,6.5,10,6.5" RenderTransformOrigin="0.5,0.5">
                             <fa:IconBlock.RenderTransform>
                                 <RotateTransform Angle="0"/>
@@ -50,8 +90,8 @@
                             </EventTrigger>
                         </Border.Triggers>
                     </Border>
-                    <!--Botón Cierre-->
-                    <hc:OutlineText Text="{Binding Title, ElementName=window}" Margin="15,15,0,0" 
+                    <!-- Titulo de la App-->
+                    <hc:OutlineText Text="{Binding Title, ElementName=window}" Margin="10,10,0,0" 
                                     HorizontalAlignment="Left" VerticalAlignment="Top" 
                                     Fill="White" Stroke="#262626" StrokeThickness="2"
                                     FontSize="25" FontFamily="Bowlby One SC">
@@ -59,94 +99,255 @@
                             <DropShadowEffect Opacity="0.5"/>
                         </hc:OutlineText.Effect>
                     </hc:OutlineText>
-                    <!--Titulo dela App-->
-                    <Grid>
-                        <hc:UniformSpacingPanel Spacing="10" Orientation="Horizontal" Margin="0,80,20,0"
-                                                VerticalAlignment="Top" HorizontalAlignment="Right">
-                            <hc:UniformSpacingPanel.Resources>
-                                <Style x:Key="Botón" TargetType="Border">
-                                    <Setter Property="Background" Value="#FFD6D6D6"/>
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="BorderBrush" Value="White"/>
-                                    <Setter Property="Cursor" Value="Hand"/>
-                                    <Setter Property="Width" Value="50"/>
-                                    <Setter Property="Height" Value="50"/>
-                                    <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
-                                    <Setter Property="ToolTipService.Placement" Value="Top"/>
-                                </Style>
-                                <Style TargetType="ToolTip">
-                                    <Setter Property="HorizontalOffset" Value="-15"/>
-                                    <Setter Property="VerticalOffset" Value="5"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="Opacity" Value="0.75"/>
-                                </Style>
-                            </hc:UniformSpacingPanel.Resources>
-                            <Border Style="{StaticResource Botón}" MouseLeftButtonDown="AbrirAjustes">
-                                <Border.Triggers>
-                                    <EventTrigger RoutedEvent="MouseEnter">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness" To="3" Duration="0:0:0.3"/>
-                                                <DoubleAnimation Storyboard.TargetName="SettingsIcon" Storyboard.TargetProperty="Opacity" To="0.25" Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseLeave">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness" To="0" Duration="0:0:0.3"/>
-                                                <DoubleAnimation Storyboard.TargetName="SettingsIcon" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Border.Triggers>
-                                <Border.ToolTip>
-                                    <ToolTip>Ajustes</ToolTip>
-                                </Border.ToolTip>
-                                <fa:IconBlock x:Name="SettingsIcon" Icon="Gear" FontSize="25" Opacity="0.5"/>
-                            </Border>
-                            <Border Style="{StaticResource Botón}" MouseLeftButtonDown="AbrirCuentas">
-                                <Border.Triggers>
-                                    <EventTrigger RoutedEvent="MouseEnter">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness" To="3" Duration="0:0:0.3"/>
-                                                <DoubleAnimation Storyboard.TargetName="AccountIcon" Storyboard.TargetProperty="Opacity" To="0.25" Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                    <EventTrigger RoutedEvent="MouseLeave">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness" To="0" Duration="0:0:0.3"/>
-                                                <DoubleAnimation Storyboard.TargetName="AccountIcon" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Border.Triggers>
-                                <Border.ToolTip>
-                                    <ToolTip>Cuentas</ToolTip>
-                                </Border.ToolTip>
-                                <fa:IconBlock x:Name="AccountIcon" Icon="UserAlt" FontSize="25" Opacity="0.5"/>
-                            </Border>
-                            <hc:SearchBar Background="#FFD6D6D6" BorderThickness="0"
-                                          FontSize="18" SearchStarted="BusquedaHecha"
-                                          Height="50" Width="400"/>
-                        </hc:UniformSpacingPanel>
-                        <Border CornerRadius="5" Background="#FFD6D6D6" Margin="20"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                                Height="590" Width="520">
-                            <TextBox x:Name="OutputText" FontSize="18" VerticalContentAlignment="Top"></TextBox> <!--Test-->
+                    <!-- Barra de busqueda-->
+                    <hc:SearchBar FontSize="16" 
+                        SearchStarted="BusquedaHecha" TextAlignment="Left"
+                        hc:InfoElement.Placeholder="Busca un juego..."
+                        VerticalAlignment="Top" HorizontalAlignment="Center" 
+                        Margin="190,15,15,15" FontWeight="Bold"
+                        Opacity="0.5" Height="30" Width="880" BorderThickness="2"
+                        BorderBrush="#262626" Style="{DynamicResource SearchBarWithLeftIconStyle}"/>
+                    <!-- Lista principal-->
+                    <Border CornerRadius="5" Background="#262626" Margin="20" Padding="0"
+                            BorderBrush="#262626" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                            BorderThickness="5" Height="670" Width="955">
+                        <ListBox x:Name="ListaPrincipal" BorderThickness="0" ItemsSource="{Binding JuegosEnlistados}" Padding="0,0,-5,0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <hc:TransitioningContentControl TransitionMode="Top2BottomWithFade">
+                                        <Border Height="145" Width="955" Margin="-10,0,-10,0">
+                                            <Grid>
+                                                <!-- Detalles del juego -->
+                                                <Border Background="#262626">
+                                                    <Grid Margin="520,0,0,0">
+                                                        <hc:UniformSpacingPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                            <!-- Estilo 1 -->
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraHistoriaPrincipal, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="22" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="22" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Chill" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <fa:IconBlock Icon="CheckSquare" IconFont="Solid" VerticalAlignment="Top" FontSize="25" Foreground="Green" Margin="5,0,0,0" Opacity="0.5"/>
+                                                            </StackPanel>
+                                                            <!-- Estilo 2 -->
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraHistoriaSecundarias, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="22" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="22" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Average" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <fa:IconBlock Icon="CheckSquare" IconFont="Solid" VerticalAlignment="Top" FontSize="25" Foreground="Green" Margin="5,0,0,0" Opacity="0.5"/>
+                                                            </StackPanel>
+                                                            <!-- Estilo 3 -->
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraCompletar100, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="22" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="22" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Tryhard" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <fa:IconBlock Icon="CheckSquare" IconFont="Solid" VerticalAlignment="Top" FontSize="25" Foreground="Green" Margin="5,0,0,0" Opacity="0.5"/>
+                                                            </StackPanel>
+                                                        </hc:UniformSpacingPanel>
+                                                    </Grid>
+                                                </Border>
+                                                <!-- Titulo-->
+                                                <TextBlock Margin="120,5,0,0" Text="{Binding Titulo}" FontFamily="Montserat" Foreground="White" MaxHeight="30" FontSize="20" VerticalAlignment="Top" FontWeight="Bold"/>
+                                                <!-- Descripción-->
+                                                <TextBlock Margin="120,30,0,0" Text="{Binding Sinopsis}" FontFamily="Montserat" Foreground="White" Opacity="0.5" Width="380" Height="auto" TextWrapping="Wrap" TextTrimming="WordEllipsis" HorizontalAlignment="Left" TextAlignment="Justify"/>
+                                                <!-- Imagen del juego -->
+                                                <Image Source="{Binding Portada}" HorizontalAlignment="Left" Height="150" Width="115" Stretch="UniformToFill">
+                                                    <Image.Effect>
+                                                        <DropShadowEffect Opacity="0.25" Direction="0"/>
+                                                    </Image.Effect>
+                                                </Image>
+                                                <!-- Fecha -->
+                                                <Grid Margin="5" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0.75">
+                                                    <hc:OutlineText Text="{Binding Año}" FontSize="15" FontWeight="Black" Fill="White" Stroke="#262626" StrokeThickness="8"/>
+                                                    <hc:OutlineText Text="{Binding Año}" FontSize="15" FontWeight="Black" Fill="White" Stroke="Transparent" StrokeThickness="8"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </hc:TransitioningContentControl>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                    <!-- Combobox de Longitud-->
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,72.5,15,0">
+                        <Border Background="#262626" Width="190" Height="30" CornerRadius="4">
+                            <hc:ComboBox hc:InfoElement.Placeholder="Seleccionar" FontSize="15" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="Transparent" Foreground="#A4A4A4" BorderThickness="0">
+                                <ComboBoxItem Content="Corta"/>
+                                <ComboBoxItem Content="Media"/>
+                                <ComboBoxItem Content="Larga"/>
+                            </hc:ComboBox>
                         </Border>
-                        <Border CornerRadius="5" Background="#FFD6D6D6" Margin="20"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                                Height="650" Width="620"/>
+                        <hc:OutlineText Text="Longitud Preferida" Fill="White" FontWeight="Bold" Stroke="#262626" StrokeThickness="4" FontSize="15" Margin="0,-12,0,0"/>
+                        <hc:OutlineText Text="Longitud Preferida" Fill="White" FontWeight="Bold" Stroke="Transparent" StrokeThickness="2" FontSize="15" Margin="0,-12,0,0"/>
                     </Grid>
-                    <!--Layout-->
-                    <StackPanel Opacity="0.8" Orientation="Vertical" Margin="0,100,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" hc:Growl.Token="GrowlContainer"/>
+                    <!-- Combobox de Estilo-->
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,121,15,0">
+                        <Border Background="#262626" Width="190" Height="30" CornerRadius="4">
+                            <hc:ComboBox hc:InfoElement.Placeholder="Seleccionar" FontSize="15" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="Transparent" Foreground="#A4A4A4" BorderThickness="0">
+                                <ComboBoxItem Content="Chill"/>
+                                <ComboBoxItem Content="Average"/>
+                                <ComboBoxItem Content="Tryhard"/>
+                            </hc:ComboBox>
+                        </Border>
+                        <hc:OutlineText Text="Estilo Preferido" Fill="White" FontWeight="Bold" Stroke="#262626" StrokeThickness="4" FontSize="15" Margin="0,-12,0,0"/>
+                        <hc:OutlineText Text="Estilo Preferido" Fill="White" FontWeight="Bold" Stroke="Transparent" StrokeThickness="2" FontSize="15" Margin="0,-12,0,0"/>
+                    </Grid>
+                    <!-- Juego Recomendado-->
+                    <Grid x:Name="JuegoRecomendado" Width="190" Height="100" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,177.5,15,0">
+                        <Grid.ToolTip>
+                            <hc:UniformSpacingPanel Spacing="5" Orientation="Vertical">
+                                <TextBlock Text="{Binding Titulo}" FontWeight="Bold" TextAlignment="Center"/>
+                                <TextBlock Text="{Binding Sinopsis}" TextAlignment="Center"/>
+                            </hc:UniformSpacingPanel>
+                        </Grid.ToolTip>
+                        <Border Background="White" CornerRadius="4" BorderThickness="4" BorderBrush="#262626">
+                            <Image Stretch="UniformToFill" Source="{Binding Portada}"/>
+                        </Border>
+                        <Border Background="Transparent" BorderBrush="#262626" BorderThickness="4" Width="67"/>
+                        <hc:OutlineText Text="Quiza te guste..." Fill="White" FontWeight="Bold" Stroke="#262626" StrokeThickness="6" FontSize="18" Margin="0,-12,0,0"/>
+                        <hc:OutlineText Text="Quiza te guste..." Fill="White" FontWeight="Bold" Stroke="Transparent" StrokeThickness="2" FontSize="18" Margin="0,-12,0,0"/>
+                    </Grid>
+                    <!-- Estadisticas-->
+                    <Grid Height="205" Width="190" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,295,15,0">
+                        <Border Background="#262626" CornerRadius="4">
+                            <hc:TransitioningContentControl TransitionMode="Fade">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <hc:UniformSpacingPanel Spacing="5" Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                                            <Rectangle Fill="#E9FFCE" Width="20" Height="20" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Juegos Por Terminar" Foreground="#E9FFCE" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                                            <Rectangle Fill="#BBF472" Width="20" Height="20" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Juegos Terminados" Foreground="#BBF472" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <ProgressBar Width="180" Background="#E9FFCE" Margin="0,7,0,0"/>
+                                        <!--TODO: cambiarlas por unas custom-->
+                                    </hc:UniformSpacingPanel>
+                                    <hc:UniformSpacingPanel Spacing="5" Orientation="Vertical" Margin="0,15,0,0">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                                            <Rectangle Fill="#FFEAC1" Width="20" Height="20" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Hrs de juego Faltantes" Foreground="#FFEAC1" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                                            <Rectangle Fill="#F4C872" Width="20" Height="20" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Hrs de juego Jugadas" Foreground="#F4C872" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <ProgressBar Width="180" Background="#FFEAC1" Margin="0,7,0,0"/>
+                                        <!--TODO: cambiarlas por unas custom-->
+                                    </hc:UniformSpacingPanel>
+                                </StackPanel>
+                            </hc:TransitioningContentControl>
+                        </Border>
+                        <hc:OutlineText Text="Mis Estadisticas" HorizontalAlignment="Center" Fill="White" FontWeight="Bold" Stroke="#262626" StrokeThickness="6" FontSize="20" Margin="0,-12,0,0"/>
+                        <hc:OutlineText Text="Mis Estadisticas" HorizontalAlignment="Center" Fill="White" FontWeight="Bold" Stroke="Transparent" StrokeThickness="2" FontSize="20" Margin="0,-12,0,0"/>
+                    </Grid>
+                    <!-- Cantidad de juegos-->
+                    <Grid Width="150" Height="150" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,520,35,0">
+                        <Ellipse Fill="#262626" Stroke="#e6e955" StrokeThickness="6"/>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock x:Name="CantidadDeJuegos" Text="0" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="32" Margin="0,0,0,-5"/>
+                            <TextBlock Text="Juegos" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="20" Opacity="0.8"/>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Botón Importar-->
+                    <hc:TransitioningContentControl TransitionMode="Bottom2Top">
+                        <Border Width="190" Height="45" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#262626" CornerRadius="4" Margin="0,685,15,0" Cursor="Hand" ToolTipService.Placement="Top" ToolTipService.HasDropShadow="True">
+                            <Border.ToolTip>
+                                <TextBlock Text="Importa o exporta tus listas de juegos!"/>
+                            </Border.ToolTip>
+                            <TextBlock Text="Importar / Exportar" FontWeight="Bold" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </hc:TransitioningContentControl>
+                    <!-- Resultados Busqueda-->
+                    <Border x:Name="BordeListaResultados" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Top" Width="880" Margin="175,40,0,0" MaxHeight="200" BorderThickness="2,1,2,2" BorderBrush="#A8A7A7" CornerRadius="0,0,8,8">
+                        <Border.Background>
+                            <SolidColorBrush Color="White" Opacity="0.7"/>
+                        </Border.Background>
+                        <ListBox x:Name="ListaResultadosDeBusqueda" BorderThickness="0" Background="Transparent" ItemsSource="{Binding ResultadosBusqueda}" Padding="0,0,-5,0" MouseLeave="CerrarResultados">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <hc:TransitioningContentControl TransitionMode="Top2BottomWithFade">
+                                        <Border Height="110" Width="880" Margin="-10,0,5,0">
+                                            <Grid>
+                                                <!-- Detalles del juego -->
+                                                <Border Background="#262626">
+                                                    <Grid Margin="490,0,0,0">
+                                                        <hc:UniformSpacingPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="15">
+                                                            <!-- Estilo 1 -->
+                                                            <StackPanel Orientation="Vertical">
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Chill" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraHistoriaPrincipal, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="16" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="16" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <!-- Estilo 2 -->
+                                                            <StackPanel Orientation="Vertical">
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Average" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraHistoriaSecundarias, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="16" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="16" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <!-- Estilo 3 -->
+                                                            <StackPanel Orientation="Vertical">
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <TextBlock Text="Tryhard" FontWeight="Bold" FontSize="22" Foreground="White" HorizontalAlignment="Left"/>
+                                                                    <TextBlock Text="Style" FontWeight="Bold" FontSize="14" Foreground="White" Opacity="0.5" HorizontalAlignment="Left" Margin="0,-5,0,0"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding CalidadPorHoraCompletar100, StringFormat={}{0:F1}}" FontWeight="Bold" FontSize="16" Foreground="#F4C872" Margin="0,0,2,0"/>
+                                                                    <fa:IconBlock Icon="Star" FontSize="16" IconFont="Solid" Foreground="#F4C872"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </hc:UniformSpacingPanel>
+                                                    </Grid>
+                                                </Border>
+                                                <!-- Titulo-->
+                                                <TextBlock Margin="90,5,0,0" Text="{Binding Titulo}" FontFamily="Montserat" Foreground="White" MaxHeight="30" FontSize="16" VerticalAlignment="Top" FontWeight="Bold"/>
+                                                <!-- Descripción-->
+                                                <TextBlock Margin="90,30,0,0" Text="{Binding Sinopsis}" FontFamily="Montserat" Foreground="White" Opacity="0.5" FontSize="10" Width="380" Height="auto" TextWrapping="Wrap" TextTrimming="WordEllipsis" HorizontalAlignment="Left" TextAlignment="Justify"/>
+                                                <!-- Imagen del juego -->
+                                                <Image Source="{Binding Portada}" HorizontalAlignment="Left" Height="100" Width="80" Stretch="UniformToFill">
+                                                    <Image.Effect>
+                                                        <DropShadowEffect Opacity="0.25" Direction="0"/>
+                                                    </Image.Effect>
+                                                </Image>
+                                                <!-- Fecha -->
+                                                <Grid Margin="5" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0.75">
+                                                    <hc:OutlineText Text="{Binding Año}" FontSize="15" FontWeight="Black" Fill="White" Stroke="#262626" StrokeThickness="8"/>
+                                                    <hc:OutlineText Text="{Binding Año}" FontSize="15" FontWeight="Black" Fill="White" Stroke="Transparent" StrokeThickness="8"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </hc:TransitioningContentControl>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                    <!--Growls-->
+                    <StackPanel Opacity="0.8" Orientation="Vertical" Margin="0,65,230,0" HorizontalAlignment="Right" VerticalAlignment="Top" hc:Growl.Token="GrowlContainer"/>
                 </Grid>
             </Viewbox>
         </Border>

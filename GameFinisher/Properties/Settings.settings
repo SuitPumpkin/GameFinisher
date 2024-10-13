@@ -2,15 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GameFinisher.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="SteamID" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="GOGUsername" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="LastGameImport" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="IGDBID" Type="System.String" Scope="Application">
       <Value Profile="(Default)">zj3dihoaqe9ougkayckq6h7c31umqz</Value>
     </Setting>

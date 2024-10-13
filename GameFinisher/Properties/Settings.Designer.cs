@@ -23,42 +23,6 @@ namespace GameFinisher.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SteamID {
-            get {
-                return ((string)(this["SteamID"]));
-            }
-            set {
-                this["SteamID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GOGUsername {
-            get {
-                return ((string)(this["GOGUsername"]));
-            }
-            set {
-                this["GOGUsername"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastGameImport {
-            get {
-                return ((string)(this["LastGameImport"]));
-            }
-            set {
-                this["LastGameImport"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("zj3dihoaqe9ougkayckq6h7c31umqz")]
